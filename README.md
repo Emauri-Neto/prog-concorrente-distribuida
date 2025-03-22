@@ -1,4 +1,4 @@
-# Estrutura de Dados
+# Programação Concorrente e Distribuída
 
 - Este repositório tem como objetivo armazenar os exercícios da disciplina de Estrutura de Dados.
 
