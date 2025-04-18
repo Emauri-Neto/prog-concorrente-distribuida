@@ -52,5 +52,3 @@ Para testar as funcionalidades descritas no documento:
 > O sistema aceita até 5 conexões simultâneas. Ao atingir esse limite, novas tentativas de entrada serão automaticamente bloqueadas.
 
 ---
-
-Sinta-se à vontade para abrir issues ou enviar pull requests caso tenha sugestões ou melhorias!
