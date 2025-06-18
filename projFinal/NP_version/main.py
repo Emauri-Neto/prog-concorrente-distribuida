@@ -3,7 +3,7 @@ import glob
 import os
 import matplotlib.pyplot as plt
 
-CSV_PATH = "../dados"
+CSV_PATH = "../Dados"
 CHUNK_SIZE = 500_000
 
 def get_files(dir):
