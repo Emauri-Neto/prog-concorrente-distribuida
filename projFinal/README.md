@@ -30,7 +30,41 @@
         cd P_version
         ```
 
-2.  Nos dois casos, há duas formas de executar o código:
+2. Crie um ambiente virtual e o ative
+
+    ```bash
+    python -m venv venv
+    ```
+
+    **Ativação:**
+
+    * **Linux:**
+
+        ```bash
+        source venv/bin/activate
+        ```
+
+    * **Windows:**
+
+        ```powershell
+        .\venv\Scripts\Activate
+        ```
+
+    **Desativação:**
+
+    Em ambos os sistemas, o comando é:
+
+    ```bash
+    deactivate
+    ```
+
+3. Instale as dependências
+
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+4. Execute o código de uma das seguintes formas:
 
     * **Utilizando o script shell na raiz do projeto:**
 
@@ -38,7 +72,7 @@
         sh ./main.sh
         ```
 
-        > Esse arquivo deleta as execuções anteriores, sendo recomendado caso já tenha iniciado o projeto uma vez.
+        > Este arquivo apaga as execuções anteriores e é recomendado se o projeto já foi iniciado. Funciona exclusivamente no Linux.
 
     * **Manualmente:**
 
