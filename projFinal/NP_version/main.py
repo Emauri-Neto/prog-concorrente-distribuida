@@ -2,6 +2,7 @@ import pandas as pd
 import glob
 import os
 import matplotlib.pyplot as plt
+import time
 
 CSV_PATH = "../Dados"
 CHUNK_SIZE = 500_000
@@ -16,6 +17,8 @@ class DataProcessor:
         self.summary = pd.DataFrame()
 
     def extract(self):
+        print("📦 Iniciando EXTRAÇÃO dos dados...")
+        start_time = time.perf_counter()
         data = []
         for file in self.files:
             print(f"📥 Lendo {file}")
@@ -30,9 +33,13 @@ class DataProcessor:
         colunas_numericas = [col for col in self.df.columns if col.startswith(('julg', 'dist', 'susp', 'casos', 'dessobrestados'))]
         for col in colunas_numericas:
             self.df[col] = pd.to_numeric(self.df[col], errors='coerce').fillna(0)
+        
+        elapsed = time.perf_counter() - start_time
+        print(f"⏱️ EXTRAÇÃO concluída em {elapsed:.2f} segundos.\n")
 
     def transform(self):
         print("⚙️ Iniciando transformação das metas...")
+        start_time = time.perf_counter()
 
         formulas = {
             # Comuns a quase todos os ramos
@@ -97,8 +104,11 @@ class DataProcessor:
         
         self.df = pd.concat(chunks, ignore_index=True)
         print("✅ Todas as metas calculadas com sucesso.")
+        elapsed = time.perf_counter() - start_time
+        print(f"✅ TRANSFORMAÇÃO concluída em {elapsed:.2f} segundos.\n")
 
     def calculate(self, chunk, formulas):
+        start_time = time.perf_counter()
         for meta, fn in formulas.items():
             print(f"    ➡️ Calculando {meta}...")
             resultados = []
@@ -110,16 +120,23 @@ class DataProcessor:
                 except Exception:
                     resultados.append("NA")
             chunk[meta] = resultados
+        elapsed = time.perf_counter() - start_time
+        print(f"⏱️ Chunk calculado em {elapsed:.2f} segundos.\n")
         return chunk
 
     def load(self):
+        start_time = time.perf_counter()
         cols = ['sigla_tribunal', 'ramo_justica'] + [c for c in self.df.columns if c.startswith('Meta')]
         self.summary = self.df[cols].copy()
         self.summary.fillna("NA", inplace=True)
         self.summary.to_csv('ResumoMetas.csv', index=False)
+        elapsed = time.perf_counter() - start_time
         print("📁 Arquivo ResumoMetas.csv gerado com sucesso.")
+        print(f"⏱️ CARGA concluída em {elapsed:.2f} segundos.\n")
 
     def show_graph(self):
+        print("📊 Iniciando GERAÇÃO DE GRÁFICO...")
+        start_time = time.perf_counter()
         metas = [col for col in self.summary.columns if col.startswith("Meta")]
         medias = []
 
@@ -143,32 +160,8 @@ class DataProcessor:
         plt.tight_layout()
         plt.savefig("grafico_metas.png", bbox_inches='tight')
         plt.show()
-        print("📊 Gráfico geral gerado com sucesso (grafico_metas.png)")
-
-        sufixos = ["F", "M", "E", "T", "STJ"]
-        nomes = {
-            "F": "Federal",
-            "M": "Militar",
-            "E": "Eleitoral",
-            "T": "Trabalho",
-            "STJ": "Superior_Justica"
-        }
-        for suf in sufixos:
-            metas_filtradas = [m for m in metas if m.endswith(suf)]
-            if not metas_filtradas:
-                continue
-            valores = [pd.to_numeric(self.summary[m], errors='coerce').mean(skipna=True) for m in metas_filtradas]
-
-            plt.figure(figsize=(10, 5))
-            plt.bar(metas_filtradas, valores, color='lightcoral')
-            plt.title(f"Desempenho médio - Metas do ramo {nomes[suf]}")
-            plt.xticks(rotation=45, ha='right')
-            plt.ylabel("Média")
-            plt.tight_layout()
-            nome_arquivo = f"grafico_metas_{nomes[suf].lower().replace(' ', '_')}.png"
-            plt.savefig(nome_arquivo, bbox_inches='tight')
-            plt.close()
-            print(f"📊 Gráfico gerado: {nome_arquivo}")
+        elapsed = time.perf_counter() - start_time
+        print(f"✅ Gráfico gerado com sucesso (grafico_metas.png) em {elapsed:.2f} segundos.\n")
 
 if __name__ == "__main__":
     arquivos = get_files(CSV_PATH)
@@ -187,3 +180,5 @@ if __name__ == "__main__":
 
     print("📑 Etapa: Gráfico")
     etl.show_graph()
+
+    print("✅ Processo inteiro completo")
